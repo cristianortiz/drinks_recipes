@@ -3,11 +3,11 @@ import { CategoryContext } from "../context/CategoryContext";
 import { RecipesContext } from "../context/RecipesContext";
 
 const Form = () => {
-  //get data from CategoryProvider
+  //get data from CategoryContext
   const { categorys } = useContext(CategoryContext);
 
   //get state handle function from RecipesProvider
-  const { handleSearchRecipes } = useContext(RecipesContext);
+  const { handleSearchRecipes, handleRequest } = useContext(RecipesContext);
 
   //local useState to state specifics form inputs data
   const [search, handleSearch] = useState({
@@ -29,6 +29,7 @@ const Form = () => {
       onSubmit={(e) => {
         e.preventDefault();
         handleSearchRecipes(search); //state form input values to requestAPI in the RecipesContext
+        handleRequest(true); //enable the recipes API request function in RecipesContext
       }}
       className="col-12"
     >
