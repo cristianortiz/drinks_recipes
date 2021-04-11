@@ -7,13 +7,19 @@ const Form = () => {
   const { categorys } = useContext(CategoryContext);
 
   //get state handle function from RecipesProvider
-  const { handleSearchRecipes, handleRequest } = useContext(RecipesContext);
+  const { handleSearchRecipes, handleRequest, handleSpinner } = useContext(
+    RecipesContext
+  );
 
   //local useState to state specifics form inputs data
   const [search, handleSearch] = useState({
     name: "",
     category: "",
   });
+  //useState hook to keetp track form validations error
+  const [error, handleError] = useState(false);
+  //destructuring state form inputs
+  const { name, category } = search;
 
   //get data from user inputs in the form
   const getRecipesData = (e) => {
@@ -23,19 +29,33 @@ const Form = () => {
       [e.target.name]: e.target.value,
     });
   };
+  //when user submit the form
+  const submitRecipesForm = (e) => {
+    e.preventDefault();
+
+    //simple form validation
+    if (name.trim() === "" || category.trim() === "") {
+      handleError(true);
+      return;
+    }
+    handleError(false);
+
+    //state form input values to requestAPI in the RecipesContext
+    handleSearchRecipes(search);
+    //enable the useEffect hook to call the API in RecipesContext
+    handleRequest(true);
+  };
   //on form Submit event call the recipesContext state function to state the inputs values
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        handleSearchRecipes(search); //state form input values to requestAPI in the RecipesContext
-        handleRequest(true); //enable the recipes API request function in RecipesContext
-      }}
-      className="col-12"
-    >
+    <form onSubmit={submitRecipesForm} className="col-12">
       <fieldset className="text-center">
         <legend>Search Cocktails by Category or Ingredients</legend>
       </fieldset>
+      {error ? (
+        <p className="alert alert-danger text-center p-2">
+          Both fields are mandatory
+        </p>
+      ) : null}
       <div className="row mt-4">
         <div className="col-md-4">
           <input
